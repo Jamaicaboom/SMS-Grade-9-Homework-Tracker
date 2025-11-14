@@ -1,0 +1,77 @@
+import type { Metadata } from 'next'
+import { Inter } from 'next/font/google'
+import './globals.css'
+
+const inter = Inter({ subsets: ['latin'] })
+
+export const metadata: Metadata = {
+  title: 'SMS Grade 9 Homework',
+  description: 'SMS Grade 9 Homework Tracker',
+}
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <html lang="en">
+      <body className={inter.className}>{children}</body>
+    </html>
+  )
+}
+client/app/globals.css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-dark-bg text-dark-text;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-dark-card border border-dark-border rounded-lg p-6 shadow-lg transition-all duration-300 hover:shadow-xl hover:border-gray-600;
+  }
+
+  .btn-primary {
+    @apply bg-white text-black px-6 py-2 rounded-lg font-medium transition-all duration-200 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50;
+  }
+
+  .btn-secondary {
+    @apply bg-transparent border border-gray-600 text-gray-300 px-6 py-2 rounded-lg font-medium transition-all duration-200 hover:bg-gray-800 hover:border-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50;
+  }
+
+  .marquee-container {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    white-space: nowrap;
+  }
+
+  .marquee-content {
+    display: inline-block;
+    animation: marquee 20s linear infinite;
+    will-change: transform;
+  }
+
+  .marquee-content span {
+    display: inline-block;
+    padding-right: 100%;
+  }
+
+  @keyframes marquee {
+    0% {
+      transform: translateX(100%);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+}
