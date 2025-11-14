@@ -1,0 +1,20 @@
+{
+  "name": "homework-tracker",
+  "version": "1.0.0",
+  "description": "A modern homework tracking system with Discord bot integration",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:client\" \"npm run dev:server\" \"npm run dev:bot\"",
+    "dev:client": "cd client && npm run dev",
+    "dev:server": "cd server && npm run dev",
+    "dev:bot": "cd bot && npm run dev",
+    "build": "cd client && npm run build",
+    "start": "cd server && npm start"
+  },
+  "keywords": ["homework", "tracker", "discord", "bot", "nextjs", "express"],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
