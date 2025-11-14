@@ -68,7 +68,7 @@ const contactLimiter = rateLimit({
 // Middleware
 app.use(cors({
   origin: [
-    'https://sms-grade-9-homework.onrender.com',
+    'https://sms-grade-9-homework-cu1a.onrender.com',
     'http://localhost:3000',
     'http://localhost:3001',
     // Allow any origin in development, be more specific in production
