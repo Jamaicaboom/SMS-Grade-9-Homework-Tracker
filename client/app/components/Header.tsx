@@ -33,7 +33,7 @@ export default function Header({ onContactClick }: HeaderProps) {
               </div>
             </div>
           </div>
-
+          
           <div className="flex items-center space-x-2 md:space-x-4">
             <button
               onClick={onContactClick}
