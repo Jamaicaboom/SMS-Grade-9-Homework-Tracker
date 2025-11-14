@@ -68,27 +68,16 @@ const contactLimiter = rateLimit({
 // Middleware
 app.use(cors({
   origin: [
-    'https://sms-grade-9-homework-cu1a.onrender.com',
+    'https://sms-grade-9-homework-cu1a.onrender.com', // ← ADD THIS
+    'https://sms-grade-9-homework.onrender.com',
     'http://localhost:3000',
     'http://localhost:3001',
-    // Allow any origin in development, be more specific in production
     ...(process.env.NODE_ENV === 'development' ? ['*'] : [])
   ],
   methods: ['GET', 'POST', 'PATCH', 'DELETE', 'PUT', 'OPTIONS'],
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin']
 }));
-
-// Add wildcard fallback for development
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  next();
-});
-app.use(express.json());
-app.use(express.static('uploads')); // Serve uploaded files
-app.use(generalLimiter); // Apply general rate limiting to all routes
 
 // Configure multer for file uploads with better error handling
 const storage = multer.diskStorage({
