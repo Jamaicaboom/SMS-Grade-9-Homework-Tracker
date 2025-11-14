@@ -420,7 +420,7 @@ async function cleanupCompletedHomework() {
     for (const homework of allHomework) {
       const dueDate = utcToZonedTime(new Date(homework.dueDate), WINNIPEG_TIMEZONE);
       const dueDatePlusTwoDays = new Date(dueDate);
-      dueDatePlusTwoDays.setDate(dueDatePlusTwoDays.getDate() + 2);
+      dueDatePlusTwoDays.setDate(dueDatePlusTwoDays.getDate() + 3);
       
       // Check if 2 days have passed since the due date
       if (now > dueDatePlusTwoDays) {
