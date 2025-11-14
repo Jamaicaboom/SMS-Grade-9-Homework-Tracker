@@ -399,7 +399,7 @@ async function sendDiscordWebhook(contactForm) {
   }
 }
 
-// Function to clean up completed homework after 2 days
+// Function to clean up done and overdue homework after 2 days past due date
 async function cleanupCompletedHomework() {
   try {
     // If DB isn't connected, skip cleanup to avoid unhandled errors
@@ -409,35 +409,40 @@ async function cleanupCompletedHomework() {
       return;
     }
     const nowWinnipeg = utcToZonedTime(new Date(), WINNIPEG_TIMEZONE);
-    const twoDaysAgo = new Date(nowWinnipeg);
-    twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
+    const now = new Date(nowWinnipeg);
     
-    // Find homework that has been completed by someone and the completion was more than 2 days ago
-    const homeworkToDelete = await Homework.find({
-      'completedBy.0': { $exists: true }, // Has at least one completion
-      'completedBy.completedAt': { $lt: twoDaysAgo }
-    });
+    // Get all homework items
+    const allHomework = await Homework.find({});
     
-    if (homeworkToDelete.length > 0) {
-      console.log(`Cleaning up ${homeworkToDelete.length} completed homework items older than 2 days`);
+    let deletedCount = 0;
+    const deletedItems = [];
+    
+    for (const homework of allHomework) {
+      const dueDate = utcToZonedTime(new Date(homework.dueDate), WINNIPEG_TIMEZONE);
+      const dueDatePlusTwoDays = new Date(dueDate);
+      dueDatePlusTwoDays.setDate(dueDatePlusTwoDays.getDate() + 2);
       
-      // Delete homework where all completions are older than 2 days
-      for (const homework of homeworkToDelete) {
-        const recentCompletions = homework.completedBy.filter(completion => 
-          new Date(completion.completedAt) > twoDaysAgo
-        );
+      // Check if 2 days have passed since the due date
+      if (now > dueDatePlusTwoDays) {
+        const isDone = homework.status === 'Done' || homework.completedBy.length > 0;
+        const isOverdue = dueDate < now && homework.status === 'Not Done' && homework.completedBy.length === 0;
         
-        if (recentCompletions.length === 0) {
-          // All completions are older than 2 days, delete the homework
+        // Delete if homework is done or overdue
+        if (isDone || isOverdue) {
           await Homework.findByIdAndDelete(homework._id);
-          console.log(`Deleted homework: ${homework.title}`);
-        } else {
-          // Some completions are recent, keep the homework but remove old completions
-          homework.completedBy = recentCompletions;
-          await homework.save();
-          console.log(`Updated homework: ${homework.title} - removed old completions`);
+          deletedCount++;
+          deletedItems.push({
+            title: homework.title,
+            type: isDone ? 'done' : 'overdue',
+            dueDate: dueDate.toISOString()
+          });
+          console.log(`Deleted ${isDone ? 'done' : 'overdue'} homework: ${homework.title} (due: ${dueDate.toISOString()})`);
         }
       }
+    }
+    
+    if (deletedCount > 0) {
+      console.log(`Cleaned up ${deletedCount} homework items (${deletedItems.filter(i => i.type === 'done').length} done, ${deletedItems.filter(i => i.type === 'overdue').length} overdue)`);
     }
   } catch (error) {
     console.error('Error cleaning up completed homework:', error);
