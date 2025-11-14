@@ -68,7 +68,7 @@ const contactLimiter = rateLimit({
 // Middleware
 app.use(cors({
   origin: [
-    'https://sms-grade-9-homework-cu1a.onrender.com', // ← ADD THIS
+    'https://sms-grade-9-homework-cu1a.onrender.com', 
     'https://sms-grade-9-homework.onrender.com',
     'http://localhost:3000',
     'http://localhost:3001',
@@ -78,6 +78,13 @@ app.use(cors({
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin']
 }));
+
+
+app.use(express.json());
+app.use(express.static('uploads')); // Serve uploaded files
+app.use(generalLimiter); // Apply general rate limiting to all routes
+
+
 
 // Configure multer for file uploads with better error handling
 const storage = multer.diskStorage({
@@ -560,10 +567,10 @@ app.patch('/api/homework/:id', async (req, res) => {
 app.patch('/api/homework/:id/complete', async (req, res) => {
   try {
     const { id } = req.params;
-    const { username } = req.body;
+    const { username } = req.body || {}; // Add fallback for undefined body
     
     if (!username) {
-      return res.status(400).json({ error: 'Username is required' });
+      return res.status(400).json({ error: 'Username is required in request body' });
     }
     
     const homework = await Homework.findById(id);
